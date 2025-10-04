@@ -367,7 +367,6 @@ async function close_newest () {
 	if (totalTabs > TABLIMIT) {
 		// var getting = browser.storage.local.get("nosound");
 		// getting.then(play_sound, onError);
-		play_sound();
 
 		// Code to close the newest, based on tab.id
 		var index=0, i;
@@ -428,7 +427,6 @@ async function close_lru () {
 	if (totalTabs > TABLIMIT) {
 		// var getting = browser.storage.local.get("nosound");
 		// getting.then(play_sound, onError);
-		play_sound();
 
 
 		// Code to close the least recently used
@@ -475,7 +473,6 @@ async function right_close () {
 	if (totalTabs > TABLIMIT) {
 		// var getting = browser.storage.local.get("nosound");
 		// getting.then(play_sound, onError);
-		play_sound();
 
 		await chrome.tabs.remove(tabArray[tabArray.length-1].id);
 		right_close();
@@ -498,47 +495,11 @@ async function left_close () {
 	if (totalTabs > TABLIMIT) {
 		// var getting = browser.storage.local.get("nosound");
 		// getting.then(play_sound, onError);
-		play_sound();
 
 		await chrome.tabs.remove(tabArray[0].id);
 		left_close();
 		addonRemoving = true;
 	} 
-}
-
-async function play_sound () {
-	var audiofile = "";
-	
-	var arbit = await chrome.storage.local.get("nosound");
-	if (arbit.nosound) {
-		// Do nothing
-		// console.log("Within nosound if stmt");
-	} else {
-		arbit = await chrome.storage.local.get("buzzer");
-		if (arbit.buzzer) {
-			audiofile = 'buzzer.ogg';
-		}
-		arbit = await chrome.storage.local.get("gong");
-		if (arbit.gong) {
-			audiofile = 'gong.ogg';
-		}
-		arbit = await chrome.storage.local.get("doorbell");
-		if (arbit.doorbell) {
-			audiofile = 'doorbell.ogg';
-		}
-		arbit = await chrome.storage.local.get("beep");
-		if (arbit.beep) {
-			audiofile = 'beep.ogg';
-		} 
-
-		if ((Date.now() - SOUND_LAST_PLAYED) > 2000) {
-			var audio = new Audio(audiofile);
-			audio.play();
-			SOUND_LAST_PLAYED = Date.now();
-		}
-	}
-	// console.log("audiofile = " + audiofile);
-	
 }
 
 // Fired periodically -- set setInterval below
