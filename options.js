@@ -6,7 +6,6 @@
 var DEFAULTTABLIMIT = 1;
 var currentonly = true;
 var resetmax = false;
-var SOUND_LAST_PLAYED = Date.now()-1000;
 
 function onError(error) {
 	console.log(`Error: ${error}`);
@@ -80,49 +79,6 @@ function saveResetMax() {
 	console.log ("saveResetMax() called. resetmax = " + document.getElementById("resetmax").checked);
 }
 
-
-function saveSound() {
-	chrome.storage.local.set({ buzzer: document.getElementById("buzzer").checked });
-	chrome.storage.local.set({ gong: document.getElementById("gong").checked });
-	chrome.storage.local.set({ doorbell: document.getElementById("doorbell").checked });
-	chrome.storage.local.set({ beep: document.getElementById("beep").checked });
-	chrome.storage.local.set({ nosound: document.getElementById("nosound").checked });
-	playsound();
-}
-
-async function playsound() {
-	var audiofile = "";
-	
-	var arbit = await chrome.storage.local.get("nosound");
-	if (arbit.nosound) {
-		// Do nothing
-		// console.log("Within nosound if stmt");
-	} else {
-		arbit = await chrome.storage.local.get("buzzer");
-		if (arbit.buzzer) {
-			audiofile = 'buzzer.ogg';
-		}
-		arbit = await chrome.storage.local.get("gong");
-		if (arbit.gong) {
-			audiofile = 'gong.ogg';
-		}
-		arbit = await chrome.storage.local.get("doorbell");
-		if (arbit.doorbell) {
-			audiofile = 'doorbell.ogg';
-		}
-		arbit = await chrome.storage.local.get("beep");
-		if (arbit.beep) {
-			audiofile = 'beep.ogg';
-		} 
-
-		if ((Date.now() - SOUND_LAST_PLAYED) > 1000) {
-			var audio = new Audio(audiofile);
-			audio.play();
-			SOUND_LAST_PLAYED = Date.now();
-		}
-	}
-}
-
 function saveToggle() {
 	chrome.storage.local.set({ notoggle: document.getElementById("notoggle").checked });
 }
@@ -172,26 +128,6 @@ function restoreOptions() {
 		document.getElementById("right").checked = result.right;
 	}
 
-	function setbuzzer(result) {
-		document.getElementById("buzzer").checked = result.buzzer || true;
-	}
-
-	function setdoorbell(result) {
-		document.getElementById("doorbell").checked = result.doorbell;
-	}
-
-	function setgong(result) {
-		document.getElementById("gong").checked = result.gong;
-	}
-
-	function setbeep(result) {
-		document.getElementById("beep").checked = result.beep;
-	}
-
-	function setnosound(result) {
-		document.getElementById("nosound").checked = result.nosound;
-	}
-
 	function setToggle(result) {
 		document.getElementById("notoggle").checked = result.notoggle;
 	}
@@ -225,21 +161,6 @@ function restoreOptions() {
 	right_getting = chrome.storage.local.get("right");
 	right_getting.then(setright, onError);
 
-	doorbell_getting = chrome.storage.local.get("doorbell");
-	doorbell_getting.then(setdoorbell, onError);
-
-	gong_getting = chrome.storage.local.get("gong");
-	gong_getting.then(setgong, onError);
-
-	beep_getting = chrome.storage.local.get("beep");
-	beep_getting.then(setbeep, onError);
-
-	buzzer_getting = chrome.storage.local.get("buzzer");
-	buzzer_getting.then(setbuzzer, onError);
-
-	nosound_getting = chrome.storage.local.get("nosound");
-	nosound_getting.then(setnosound, onError);
-
 	cs_getting = chrome.storage.local.get("notoggle");
 	cs_getting.then(setToggle, onError);
 
@@ -252,11 +173,6 @@ document.addEventListener("DOMContentLoaded", onstart);
 
 document.getElementById("currentonly").addEventListener("change", saveCurrentOnly);
 document.getElementById("resetmax").addEventListener("change", saveResetMax);
-document.getElementById("buzzer").addEventListener("change", saveSound);
-document.getElementById("doorbell").addEventListener("change", saveSound);
-document.getElementById("gong").addEventListener("change", saveSound);
-document.getElementById("beep").addEventListener("change", saveSound);
-document.getElementById("nosound").addEventListener("change", saveSound);
 document.getElementById("notoggle").addEventListener("change", saveToggle);
 document.getElementById("showtabs").addEventListener("change", saveShowTabs);
 document.getElementById("maxtabs").addEventListener("change", saveMaxTabs);

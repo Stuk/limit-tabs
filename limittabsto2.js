@@ -182,11 +182,6 @@ function firststart(mt_item) {
 
 		chrome.storage.local.set({ currentonly: true });
 
-		chrome.storage.local.set({ buzzer: true });
-		chrome.storage.local.set({ gong: false });
-		chrome.storage.local.set({ doorbell: false });
-		chrome.storage.local.set({ nosound: false });
-
 		chrome.storage.local.set({ newest: true });
 		chrome.storage.local.set({ lru: false });
 		chrome.storage.local.set({ left: false });
