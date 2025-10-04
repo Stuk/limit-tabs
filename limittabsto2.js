@@ -66,7 +66,7 @@ var tabRemoved = false;
 
 function toggle_enable() {
 	// console.log ("toggle_enable called...");
-	var getting = browser.storage.local.get("notoggle");
+	var getting = chrome.storage.local.get("notoggle");
 	getting.then(doToggle, onError);
 }
 
@@ -75,42 +75,42 @@ async function doToggle (result) {
 		if (limitEnabled) {
 			// console.log ("limitEnabled set to true");
 			limitEnabled = false;
-			browser.storage.local.set({ limit_enabled: false });
-			browser.browserAction.setIcon({path: "icons/disabled.png"});
+			chrome.storage.local.set({ limit_enabled: false });
+			chrome.action.setIcon({path: "icons/disabled.png"});
 
 			// 29May21. Cycle through all windows
-    			var gettingAll = browser.windows.getAll();
+    			var gettingAll = chrome.windows.getAll();
     			gettingAll.then((windows) => {
       			for (var item of windows) {
-				browser.browserAction.setBadgeText({text: "", windowId: item.id});
+				chrome.action.setBadgeText({text: "", windowId: item.id});
       				}
     			});
 
 			
 		} else {
 			limitEnabled = true;
-			browser.storage.local.set({ limit_enabled: true });
-			browser.browserAction.setIcon({path: "icons/enabled.png"});
+			chrome.storage.local.set({ limit_enabled: true });
+			chrome.action.setIcon({path: "icons/enabled.png"});
 
 
 			var totalTabs = 0;
 			// First get the number of tabs in other windows
 			if (! currentonly) {
-				let tabArray = await browser.tabs.query({currentWindow: false, pinned: false});
+				let tabArray = await chrome.tabs.query({currentWindow: false, pinned: false});
 				totalTabs = tabArray.length;
 			}
 
 			// Now retrieve the number of tabs in the current window
-			let tabArray = await browser.tabs.query({currentWindow: true, pinned: false});
+			let tabArray = await chrome.tabs.query({currentWindow: true, pinned: false});
 			totalTabs = totalTabs + tabArray.length;
 
 			// 27Jul22. If setmax enabled, set TABLIMIT to current number of tabs
-			let result = await browser.storage.local.get("resetmax");
+			let result = await chrome.storage.local.get("resetmax");
 
 			if (result.resetmax) {
 				TABLIMIT = totalTabs;
-				browser.storage.local.set({ maxtabs: TABLIMIT });
-				
+				chrome.storage.local.set({ maxtabs: TABLIMIT });
+
 			}
 
 			updateBadgeCount(totalTabs, TABLIMIT);
@@ -125,14 +125,14 @@ function onError(error) {
 
 async function updateBadgeCount(actualCount, limitTabs) {
 			
-	let myWindow = await browser.windows.getCurrent();
+	let myWindow = await chrome.windows.getCurrent();
 	windowId = myWindow.id;
 
 	// 21Sep2020. Modified next line
 	// let percent = Math.round(actualCount * 100 / limitTabs);
 	let percent = Math.floor(actualCount * 100 / limitTabs);
 
-	let result = await browser.storage.local.get("showtabs");
+	let result = await chrome.storage.local.get("showtabs");
 	// console.log ("updateBadgeCount. actualCount = " + actualCount);
 
 	// console.log ("updateBadgeCount. windowId = " + windowId);
@@ -144,26 +144,26 @@ async function updateBadgeCount(actualCount, limitTabs) {
 	//	all windows, only the current window is updated. Switching to the other window would show an incorrect
 	//	number (when limit is global) until a tab is added/deleted
 	if (result.showtabs) {
-		browser.browserAction.setBadgeText({text: actualCount.toString(), windowId: windowId });
+		chrome.action.setBadgeText({text: actualCount.toString(), windowId: windowId });
 	} else {
-		browser.browserAction.setBadgeText({text: percent.toString() + "%", windowId: windowId});
+		chrome.action.setBadgeText({text: percent.toString() + "%", windowId: windowId});
 	}
 	if (percent >= 90) {
-		browser.browserAction.setBadgeTextColor({color: "red", windowId});
-		browser.browserAction.setBadgeBackgroundColor({color: "lightgray", windowId: windowId});
+		chrome.action.setBadgeTextColor({color: "red", windowId});
+		chrome.action.setBadgeBackgroundColor({color: "lightgray", windowId: windowId});
 	} else {
-		browser.browserAction.setBadgeTextColor({color: "black", windowId});
-		browser.browserAction.setBadgeBackgroundColor({color: "lightgray", windowId: windowId});
+		chrome.action.setBadgeTextColor({color: "black", windowId});
+		chrome.action.setBadgeBackgroundColor({color: "lightgray", windowId: windowId});
 	}
 	
 }
 
 function onTabsChanged() {
 	if (tabRemoved) {
-		var getting = browser.storage.local.get("limit_enabled");
+		var getting = chrome.storage.local.get("limit_enabled");
 		getting.then(isEnabled, onError);
 	} else {
-		var getting = browser.storage.local.get("firststart");
+		var getting = chrome.storage.local.get("firststart");
 		getting.then(firststart, onError);
 	}
 }
@@ -178,30 +178,30 @@ function firststart(mt_item) {
 
 		// 31May2021. Added code to set all defaults the first time
 
-		browser.storage.local.set({ firststart: 1 });
+		chrome.storage.local.set({ firststart: 1 });
 
-		browser.storage.local.set({ currentonly: true });
+		chrome.storage.local.set({ currentonly: true });
 
-		browser.storage.local.set({ buzzer: true });
-		browser.storage.local.set({ gong: false });
-		browser.storage.local.set({ doorbell: false });
-		browser.storage.local.set({ nosound: false });
+		chrome.storage.local.set({ buzzer: true });
+		chrome.storage.local.set({ gong: false });
+		chrome.storage.local.set({ doorbell: false });
+		chrome.storage.local.set({ nosound: false });
 
-		browser.storage.local.set({ newest: true });
-		browser.storage.local.set({ lru: false });
-		browser.storage.local.set({ left: false });
-		browser.storage.local.set({ right: false });
+		chrome.storage.local.set({ newest: true });
+		chrome.storage.local.set({ lru: false });
+		chrome.storage.local.set({ left: false });
+		chrome.storage.local.set({ right: false });
 
-		browser.storage.local.set({ limit_enabled: true });
+		chrome.storage.local.set({ limit_enabled: true });
 
-		browser.storage.local.set({ showtabs: false });
+		chrome.storage.local.set({ showtabs: false });
 
-		browser.storage.local.set({ notoggle: false });
+		chrome.storage.local.set({ notoggle: false });
 
 		// Sets the limit to the current number of tabs. User can subsequently change it
 		first_limit();
 	} else {
-		var getting = browser.storage.local.get("limit_enabled");
+		var getting = chrome.storage.local.get("limit_enabled");
 		getting.then(isEnabled, onError);
 	}
 }
@@ -212,19 +212,19 @@ async function first_limit() {
 
 	// 29Nov2023. Modified to retrieve tabcount from all windows
 	var totalTabs = 0;
-	let tabArray = await browser.tabs.query({currentWindow: true, pinned: false});
+	let tabArray = await chrome.tabs.query({currentWindow: true, pinned: false});
 	totalTabs = tabArray.length;
 
 	// Retrieve tabs in other windows
-	let tabArrayOther = await browser.tabs.query({currentWindow: false, pinned: false});
+	let tabArrayOther = await chrome.tabs.query({currentWindow: false, pinned: false});
 	totalTabs = totalTabs + tabArrayOther.length;
 
 	if (totalTabs > DEFAULTTABLIMIT ) {
-		browser.storage.local.set({ maxtabs: totalTabs });
+		chrome.storage.local.set({ maxtabs: totalTabs });
 		TABLIMIT=totalTabs;
 
 	} else {
-		browser.storage.local.set({ maxtabs: DEFAULTTABLIMIT  });
+		chrome.storage.local.set({ maxtabs: DEFAULTTABLIMIT  });
 		TABLIMIT=DEFAULTTABLIMIT;
 	}
 
@@ -241,11 +241,11 @@ function isEnabled(result) {
 	if (limitEnabled == null) {
 		// console.log ("isEnabled. Setting limit_enabled ");
 
-		browser.storage.local.set({ limit_enabled: true});
+		chrome.storage.local.set({ limit_enabled: true});
 		limitEnabled = true;
 	}
 	if (limitEnabled) {
-		var getting = browser.storage.local.get("currentonly");
+		var getting = chrome.storage.local.get("currentonly");
 		getting.then(setCurrentOnly, onError);
 	}
 }
@@ -256,14 +256,14 @@ function setCurrentOnly(result) {
 	if (currentonly == null) {
 		// console.log ("setCurrentOnly. Setting currentonly ");
 
-		browser.storage.local.set({ currentonly: true});
+		chrome.storage.local.set({ currentonly: true});
 		currentonly = true;
 	}
  	
 	// console.log ("setCurrentOnly. currentonly = " + currentonly);
 	// if (currentonly) {
 		// set window Id
-		var gettingCurrent = browser.windows.getCurrent();
+		var gettingCurrent = chrome.windows.getCurrent();
 		gettingCurrent.then(setCurrentId, onError);
 }
 
@@ -274,7 +274,7 @@ function setCurrentId (result) {
 }
 
 async function doStuff() {
-	let resultTabs = await browser.storage.local.get("maxtabs");
+	let resultTabs = await chrome.storage.local.get("maxtabs");
 	TABLIMIT = resultTabs.maxtabs;
 
 	if (TABLIMIT < 1) {
@@ -286,18 +286,18 @@ async function doStuff() {
 	var totalTabs = 0;
 	// First get the number of tabs in other windows
 	if (! currentonly) {
-		let tabArray = await browser.tabs.query({currentWindow: false, pinned: false});
+		let tabArray = await chrome.tabs.query({currentWindow: false, pinned: false});
 		totalTabs = tabArray.length;
 		// console.log ("doStuff. totalTabs (false) = " + totalTabs);
 	}
 
 	// Now retrieve the number of tabs in the current window
-	let tabArray = await browser.tabs.query({currentWindow: true, pinned: false});
+	let tabArray = await chrome.tabs.query({currentWindow: true, pinned: false});
 	totalTabs = totalTabs + tabArray.length;
 	// console.log ("doStuff. totalTabs (all) = " + totalTabs);
 	
 	if (totalTabs > TABLIMIT) {
-		var getting = browser.storage.local.get("newest" || true);
+		var getting = chrome.storage.local.get("newest" || true);
 		getting.then(onCloseNewest, onError);
 	} else {
 		// For some reason, when manually removing a tab, the function gets called
@@ -325,7 +325,7 @@ function onCloseNewest(result) {
 	if (myResult) {
 		close_newest();
 	} else { 
-		var getting = browser.storage.local.get("lru");
+		var getting = chrome.storage.local.get("lru");
 		getting.then(onCloseLru, onError);
 	}
 }
@@ -334,7 +334,7 @@ function onCloseLru(result) {
 	if (result.lru) {
 		close_lru();
 	} else { 
-		var getting = browser.storage.local.get("right");
+		var getting = chrome.storage.local.get("right");
 		getting.then(onCloseRight, onError);
 	}
 }
@@ -352,14 +352,14 @@ async function close_newest () {
 	var totalTabs = 0;
 	// First get the number of tabs in other windows
 	if (! currentonly) {
-		let tabArray = await browser.tabs.query({currentWindow: false, pinned: false});
+		let tabArray = await chrome.tabs.query({currentWindow: false, pinned: false});
 		totalTabs = tabArray.length;
 	}
 
 	// console.log ("close_newest. totalTabs (other) =" + totalTabs);
 
 	// Now retrieve the number of tabs in the current window
-	let tabArray = await browser.tabs.query({currentWindow: true, pinned: false});
+	let tabArray = await chrome.tabs.query({currentWindow: true, pinned: false});
 	totalTabs = totalTabs + tabArray.length;
 
 //	console.log ("close_newest. totalTabs (all) =" + totalTabs);
@@ -386,7 +386,7 @@ async function close_newest () {
 			}
 		}
 
-		await browser.tabs.remove(tabArray[index].id);
+		await chrome.tabs.remove(tabArray[index].id);
 		close_newest();
 		addonRemoving = true;
 		// console.log ("close_newest. Inside for. tabArray.length =" + tabArray.length);
@@ -399,22 +399,22 @@ async function close_lru () {
 	// 28Nov2023. Modified next 9 lines to cater to global lru removal, if !currentonly
 	// First get the number of tabs in other windows
 	// if (! currentonly) {
-	// 	let tabArray = await browser.tabs.query({currentWindow: false, pinned: false});
+	// 	let tabArray = await chrome.tabs.query({currentWindow: false, pinned: false});
 	// 	totalTabs = tabArray.length;
 	// }
 
 	// Now retrieve the number of tabs in the current window
-	// let tabArray = await browser.tabs.query({currentWindow: true, pinned: false});
+	// let tabArray = await chrome.tabs.query({currentWindow: true, pinned: false});
 	// totalTabs = totalTabs + tabArray.length;
 
 	// First retrieve tab information of the current window
-	let tabArray = await browser.tabs.query({currentWindow: true, pinned: false});
+	let tabArray = await chrome.tabs.query({currentWindow: true, pinned: false});
 
 //	console.log ("close_lru. tabArray.length=" + tabArray.length);
 	
 	// If global, retrieve tab information of other windows
 	if (! currentonly) {
-		let tabArrayGlobal = await browser.tabs.query({currentWindow: false, pinned: false});
+		let tabArrayGlobal = await chrome.tabs.query({currentWindow: false, pinned: false});
 
 		// Add them to tabArray
 		tabArray.push(...tabArrayGlobal);
@@ -453,7 +453,7 @@ async function close_lru () {
 
 //		console.log ("close_lru. Removing Id=" + tabArray[index].id);
 
-		await browser.tabs.remove(tabArray[index].id);
+		await chrome.tabs.remove(tabArray[index].id);
 
 		close_lru();
 		addonRemoving = true;
@@ -464,12 +464,12 @@ async function right_close () {
 	var totalTabs = 0;
 	// First get the number of tabs in other windows
 	if (! currentonly) {
-		let tabArray = await browser.tabs.query({currentWindow: false, pinned: false});
+		let tabArray = await chrome.tabs.query({currentWindow: false, pinned: false});
 		totalTabs = tabArray.length;
 	}
 
 	// Now retrieve the number of tabs in the current window
-	let tabArray = await browser.tabs.query({currentWindow: true, pinned: false});
+	let tabArray = await chrome.tabs.query({currentWindow: true, pinned: false});
 	totalTabs = totalTabs + tabArray.length;
 	
 	if (totalTabs > TABLIMIT) {
@@ -477,7 +477,7 @@ async function right_close () {
 		// getting.then(play_sound, onError);
 		play_sound();
 
-		await browser.tabs.remove(tabArray[tabArray.length-1].id);
+		await chrome.tabs.remove(tabArray[tabArray.length-1].id);
 		right_close();
 		addonRemoving = true;
 	} 
@@ -487,12 +487,12 @@ async function left_close () {
 	var totalTabs = 0;
 	// First get the number of tabs in other windows
 	if (! currentonly) {
-		let tabArray = await browser.tabs.query({currentWindow: false, pinned: false});
+		let tabArray = await chrome.tabs.query({currentWindow: false, pinned: false});
 		totalTabs = tabArray.length;
 	}
 
 	// Now retrieve the number of tabs in the current window
-	let tabArray = await browser.tabs.query({currentWindow: true, pinned: false});
+	let tabArray = await chrome.tabs.query({currentWindow: true, pinned: false});
 	totalTabs = totalTabs + tabArray.length;
 	
 	if (totalTabs > TABLIMIT) {
@@ -500,7 +500,7 @@ async function left_close () {
 		// getting.then(play_sound, onError);
 		play_sound();
 
-		await browser.tabs.remove(tabArray[0].id);
+		await chrome.tabs.remove(tabArray[0].id);
 		left_close();
 		addonRemoving = true;
 	} 
@@ -509,24 +509,24 @@ async function left_close () {
 async function play_sound () {
 	var audiofile = "";
 	
-	var arbit = await browser.storage.local.get("nosound");
+	var arbit = await chrome.storage.local.get("nosound");
 	if (arbit.nosound) {
 		// Do nothing
 		// console.log("Within nosound if stmt");
 	} else {
-		arbit = await browser.storage.local.get("buzzer");
+		arbit = await chrome.storage.local.get("buzzer");
 		if (arbit.buzzer) {
 			audiofile = 'buzzer.ogg';
-		} 
-		arbit = await browser.storage.local.get("gong");
+		}
+		arbit = await chrome.storage.local.get("gong");
 		if (arbit.gong) {
 			audiofile = 'gong.ogg';
 		}
-		arbit = await browser.storage.local.get("doorbell");
+		arbit = await chrome.storage.local.get("doorbell");
 		if (arbit.doorbell) {
 			audiofile = 'doorbell.ogg';
-		} 
-		arbit = await browser.storage.local.get("beep");
+		}
+		arbit = await chrome.storage.local.get("beep");
 		if (arbit.beep) {
 			audiofile = 'beep.ogg';
 		} 
@@ -547,15 +547,14 @@ function roarkeCleanUp() {
   onTabsChanged ();
 }
 
-browser.browserAction.setTitle({title: "Toggle Limit Tabs"});
-browser.browserAction.onClicked.addListener(toggle_enable);
-browser.tabs.onCreated.addListener(function (tab) {
+chrome.action.onClicked.addListener(toggle_enable);
+chrome.tabs.onCreated.addListener(function (tab) {
   tabRemoved = false;
   onTabsChanged ();
 });
 
 // browser.tabs.onRemoved is to update badge count
-browser.tabs.onRemoved.addListener(function (tab) {
+chrome.tabs.onRemoved.addListener(function (tab) {
   tabRemoved = true;
   onTabsChanged ();
 });

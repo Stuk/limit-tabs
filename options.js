@@ -14,7 +14,7 @@ function onError(error) {
 
 function onstart() {
 	// console.log ("onstart called...");
-	var getting = browser.storage.local.get("firststart");
+	var getting = chrome.storage.local.get("firststart");
 	getting.then(firststart_options, onError);
 }
 
@@ -24,11 +24,11 @@ function firststart_options(mt_item) {
 	if (mt_item.firststart == null) {
 
 		console.log ("Inside getting.firststart_options = null");
-		browser.storage.local.set({ firststart: 1 });
+		chrome.storage.local.set({ firststart: 1 });
 
 		// First time around, set "enabled" to true (used in other .js)
 		// console.log ("firststart_options. Setting limit_enabled to true");
-		browser.storage.local.set({ limit_enabled: true });
+		chrome.storage.local.set({ limit_enabled: true });
 
 		// Sets the limit to the current number of tabs. User can subsequently change it
 		first_limit_options();
@@ -43,20 +43,20 @@ async function first_limit_options() {
 	// console.log ("Inside first_limit_options");
 
 	var totalTabs = 0;
-	let tabArray = await browser.tabs.query({currentWindow: true, pinned: false});
+	let tabArray = await chrome.tabs.query({currentWindow: true, pinned: false});
 	totalTabs = tabArray.length;
 	// console.log ("first_limit_options. tabArray.length = " + tabArray.length);
 
 	// Retrieve tabs in other windows
-	let tabArrayOther = await browser.tabs.query({currentWindow: false, pinned: false});
+	let tabArrayOther = await chrome.tabs.query({currentWindow: false, pinned: false});
 	totalTabs = totalTabs + tabArrayOther.length;
 
 	if (totalTabs > DEFAULTTABLIMIT ) {
 		// console.log ("first_limit_options. Setting maxtabs to " + totalTabs);
-		browser.storage.local.set({ maxtabs: totalTabs });
+		chrome.storage.local.set({ maxtabs: totalTabs });
 	} else {
 		// console.log ("first_limit_options. Setting maxtabs to " + DEFAULTTABLIMIT);
-		browser.storage.local.set({ maxtabs: DEFAULTTABLIMIT  });
+		chrome.storage.local.set({ maxtabs: DEFAULTTABLIMIT  });
 	}
 	restoreOptions();
 }
@@ -64,53 +64,53 @@ async function first_limit_options() {
 function saveMaxTabs() {
 	// Don't let tabs reduce below DEFAULTTABLIMIT
 	if (document.querySelector("#maxtabs").value >= DEFAULTTABLIMIT) {
-		browser.storage.local.set({ maxtabs: document.querySelector("#maxtabs").value });
+		chrome.storage.local.set({ maxtabs: document.querySelector("#maxtabs").value });
 	} else {
 		document.querySelector("#maxtabs").value = DEFAULTTABLIMIT;
 	}
 }
 
 function saveCurrentOnly() {
-	browser.storage.local.set({ currentonly: document.getElementById("currentonly").checked });
+	chrome.storage.local.set({ currentonly: document.getElementById("currentonly").checked });
 	console.log ("saveCurrentOnly() called. currentonly = " + document.getElementById("currentonly").checked);
 }
 
 function saveResetMax() {
-	browser.storage.local.set({ resetmax: document.getElementById("resetmax").checked });
+	chrome.storage.local.set({ resetmax: document.getElementById("resetmax").checked });
 	console.log ("saveResetMax() called. resetmax = " + document.getElementById("resetmax").checked);
 }
 
 
 function saveSound() {
-	browser.storage.local.set({ buzzer: document.getElementById("buzzer").checked });
-	browser.storage.local.set({ gong: document.getElementById("gong").checked });
-	browser.storage.local.set({ doorbell: document.getElementById("doorbell").checked });
-	browser.storage.local.set({ beep: document.getElementById("beep").checked });
-	browser.storage.local.set({ nosound: document.getElementById("nosound").checked });
+	chrome.storage.local.set({ buzzer: document.getElementById("buzzer").checked });
+	chrome.storage.local.set({ gong: document.getElementById("gong").checked });
+	chrome.storage.local.set({ doorbell: document.getElementById("doorbell").checked });
+	chrome.storage.local.set({ beep: document.getElementById("beep").checked });
+	chrome.storage.local.set({ nosound: document.getElementById("nosound").checked });
 	playsound();
 }
 
 async function playsound() {
 	var audiofile = "";
 	
-	var arbit = await browser.storage.local.get("nosound");
+	var arbit = await chrome.storage.local.get("nosound");
 	if (arbit.nosound) {
 		// Do nothing
 		// console.log("Within nosound if stmt");
 	} else {
-		arbit = await browser.storage.local.get("buzzer");
+		arbit = await chrome.storage.local.get("buzzer");
 		if (arbit.buzzer) {
 			audiofile = 'buzzer.ogg';
-		} 
-		arbit = await browser.storage.local.get("gong");
+		}
+		arbit = await chrome.storage.local.get("gong");
 		if (arbit.gong) {
 			audiofile = 'gong.ogg';
 		}
-		arbit = await browser.storage.local.get("doorbell");
+		arbit = await chrome.storage.local.get("doorbell");
 		if (arbit.doorbell) {
 			audiofile = 'doorbell.ogg';
-		} 
-		arbit = await browser.storage.local.get("beep");
+		}
+		arbit = await chrome.storage.local.get("beep");
 		if (arbit.beep) {
 			audiofile = 'beep.ogg';
 		} 
@@ -124,18 +124,18 @@ async function playsound() {
 }
 
 function saveToggle() {
-	browser.storage.local.set({ notoggle: document.getElementById("notoggle").checked });
+	chrome.storage.local.set({ notoggle: document.getElementById("notoggle").checked });
 }
 
 function saveShowTabs() {
-	browser.storage.local.set({ showtabs: document.getElementById("showtabs").checked });
+	chrome.storage.local.set({ showtabs: document.getElementById("showtabs").checked });
 }
 
 function saveWhichTab() {
-	browser.storage.local.set({ lru: document.getElementById("lru").checked });
-	browser.storage.local.set({ newest: document.getElementById("newest").checked });
-	browser.storage.local.set({ left: document.getElementById("left").checked });
-	browser.storage.local.set({ right: document.getElementById("right").checked });
+	chrome.storage.local.set({ lru: document.getElementById("lru").checked });
+	chrome.storage.local.set({ newest: document.getElementById("newest").checked });
+	chrome.storage.local.set({ left: document.getElementById("left").checked });
+	chrome.storage.local.set({ right: document.getElementById("right").checked });
 }
 
 function restoreOptions() {
@@ -204,46 +204,46 @@ function restoreOptions() {
 		console.log(`Error: ${error}`);
 	}
 
-	mt_getting = browser.storage.local.get("maxtabs");
+	mt_getting = chrome.storage.local.get("maxtabs");
 	mt_getting.then(setmaxtabs, onError);
 
-	currentonly_getting = browser.storage.local.get("currentonly");
+	currentonly_getting = chrome.storage.local.get("currentonly");
 	currentonly_getting.then(setcurrentonly, onError);
 
-	resetmax_getting = browser.storage.local.get("resetmax");
+	resetmax_getting = chrome.storage.local.get("resetmax");
 	resetmax_getting.then(setresetmax, onError);
 
-	newest_getting = browser.storage.local.get("newest");
+	newest_getting = chrome.storage.local.get("newest");
 	newest_getting.then(setnewest, onError);
 
-	lru_getting = browser.storage.local.get("lru");
+	lru_getting = chrome.storage.local.get("lru");
 	lru_getting.then(setlru, onError);
 
-	left_getting = browser.storage.local.get("left");
+	left_getting = chrome.storage.local.get("left");
 	left_getting.then(setleft, onError);
 
-	right_getting = browser.storage.local.get("right");
+	right_getting = chrome.storage.local.get("right");
 	right_getting.then(setright, onError);
 
-	doorbell_getting = browser.storage.local.get("doorbell");
+	doorbell_getting = chrome.storage.local.get("doorbell");
 	doorbell_getting.then(setdoorbell, onError);
 
-	gong_getting = browser.storage.local.get("gong");
+	gong_getting = chrome.storage.local.get("gong");
 	gong_getting.then(setgong, onError);
 
-	beep_getting = browser.storage.local.get("beep");
+	beep_getting = chrome.storage.local.get("beep");
 	beep_getting.then(setbeep, onError);
 
-	buzzer_getting = browser.storage.local.get("buzzer");
+	buzzer_getting = chrome.storage.local.get("buzzer");
 	buzzer_getting.then(setbuzzer, onError);
 
-	nosound_getting = browser.storage.local.get("nosound");
+	nosound_getting = chrome.storage.local.get("nosound");
 	nosound_getting.then(setnosound, onError);
 
-	cs_getting = browser.storage.local.get("notoggle");
+	cs_getting = chrome.storage.local.get("notoggle");
 	cs_getting.then(setToggle, onError);
 
-	cs_getting = browser.storage.local.get("showtabs");
+	cs_getting = chrome.storage.local.get("showtabs");
 	cs_getting.then(setShowTabs, onError);
 
 }
