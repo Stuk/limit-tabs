@@ -82,7 +82,7 @@ async function doToggle (result) {
     			var gettingAll = chrome.windows.getAll();
     			gettingAll.then((windows) => {
       			for (var item of windows) {
-				chrome.action.setBadgeText({text: "", windowId: item.id});
+				chrome.action.setBadgeText({text: ""});
       				}
     			});
 
@@ -144,17 +144,17 @@ async function updateBadgeCount(actualCount, limitTabs) {
 	//	all windows, only the current window is updated. Switching to the other window would show an incorrect
 	//	number (when limit is global) until a tab is added/deleted
 	if (result.showtabs) {
-		chrome.action.setBadgeText({text: actualCount.toString(), windowId: windowId });
+		chrome.action.setBadgeText({text: actualCount.toString() });
 	} else {
-		chrome.action.setBadgeText({text: percent.toString() + "%", windowId: windowId});
+		chrome.action.setBadgeText({text: percent.toString() + "%"});
 	}
-	if (percent >= 90) {
-		chrome.action.setBadgeTextColor({color: "red", windowId});
-		chrome.action.setBadgeBackgroundColor({color: "lightgray", windowId: windowId});
-	} else {
-		chrome.action.setBadgeTextColor({color: "black", windowId});
-		chrome.action.setBadgeBackgroundColor({color: "lightgray", windowId: windowId});
-	}
+	// if (percent >= 90) {
+	// 	chrome.action.setBadgeTextColor({color: "red"});
+	// 	chrome.action.setBadgeBackgroundColor({color: "lightgray"});
+	// } else {
+	// 	chrome.action.setBadgeTextColor({color: "black"});
+	// 	chrome.action.setBadgeBackgroundColor({color: "lightgray"});
+	// }
 	
 }
 
