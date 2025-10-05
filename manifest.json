@@ -1,5 +1,5 @@
 {
-  "description": "Limits tabs to maintain system responsiveness",
+  "description": "Limits tabs to keep things tidy",
   "manifest_version": 3,
   "name": "Limit Tabs",
   "version": "2.2.10",
