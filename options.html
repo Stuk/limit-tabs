@@ -8,24 +8,23 @@
   <body>
 
     <form>
-      <label>Maximum number of Tabs: <input type="number" id="maxtabs"> </label>
+      <label>Maximum number of tabs: <input type="number" id="maxtabs"> </label>
 		<br>
 		<label>Apply limit:<label><br>
 			&emsp;<label><input type="radio" name="scope" id="perwindow">per window</label><br>
 			&emsp;<label><input type="radio" name="scope" id="global">across all windows</label><br>
 		<br>
-      <label>&emsp;Reset maximum to current number of tabs when reenabled after disabling<input
-			type="checkbox" id="resetmax">
-		<br><br>
 		<label>When exceeded, remove tab:<label><br>
 			&emsp;<label><input type="radio" name="action" id="newest">Newest</label><br>
 			&emsp;<label><input type="radio" name="action" id="lru">Least Recently Used</label><br>
 			&emsp;<label><input type="radio" name="action" id="left">Left-Most</label><br>
 			&emsp;<label><input type="radio" name="action" id="right">Right-Most</label><br>
 		<br>
-      <label>Disable Toolbar On/Off Toggle<input type="checkbox" id="notoggle">
+	    <label><input type="checkbox" id="showtabs"> Show Number of Tabs instead of Percentage</label>
+	  <br>
+      <label><input type="checkbox" id="notoggle"> Disable Toolbar On/Off Toggle</label>
 		<br>
-      <label>Show Number of Tabs instead of Percentage<input type="checkbox" id="showtabs">
+	  <label>&emsp;<input type="checkbox" id="resetmax"> Reset maximum to current number of tabs when reenabled after disabling</label>
     </form>
 
     <script src="options.js"></script>
