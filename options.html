@@ -10,7 +10,9 @@
     <form>
       <label>Maximum number of Tabs: <input type="number" id="maxtabs"> </label>
 		<br>
-      <label>&emsp;Above limit per window [if unchecked, applies globally] <input type="checkbox" id="currentonly">
+		<label>Apply limit:<label><br>
+			&emsp;<label><input type="radio" name="scope" id="perwindow">per window</label><br>
+			&emsp;<label><input type="radio" name="scope" id="global">across all windows</label><br>
 		<br>
       <label>&emsp;Reset maximum to current number of tabs when reenabled after disabling<input
 			type="checkbox" id="resetmax">

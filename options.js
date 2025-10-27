@@ -69,9 +69,9 @@ function saveMaxTabs() {
 	}
 }
 
-function saveCurrentOnly() {
-	chrome.storage.local.set({ currentonly: document.getElementById("currentonly").checked });
-	console.log ("saveCurrentOnly() called. currentonly = " + document.getElementById("currentonly").checked);
+function saveScope() {
+	chrome.storage.local.set({ currentonly: document.getElementById("perwindow").checked });
+	console.log ("saveScope() called. currentonly = " + document.getElementById("perwindow").checked);
 }
 
 function saveResetMax() {
@@ -102,10 +102,12 @@ function restoreOptions() {
 		document.querySelector("#maxtabs").value = result.maxtabs || DEFAULTTABLIMIT;
 	}
 
-	function setcurrentonly(result) {
+	function setscope(result) {
 		// Bug fix. Always sets to "true". Changed next line
-		// document.getElementById("currentonly").checked = result.currentonly || true;
-		document.getElementById("currentonly").checked = !!(result.currentonly ?? true);
+		// Default to per window (true) if not set
+		const isPerWindow = !!(result.currentonly ?? true);
+		document.getElementById("perwindow").checked = isPerWindow;
+		document.getElementById("global").checked = !isPerWindow;
 	}
 
 	function setresetmax(result) {
@@ -143,8 +145,8 @@ function restoreOptions() {
 	mt_getting = chrome.storage.local.get("maxtabs");
 	mt_getting.then(setmaxtabs, onError);
 
-	currentonly_getting = chrome.storage.local.get("currentonly");
-	currentonly_getting.then(setcurrentonly, onError);
+	scope_getting = chrome.storage.local.get("currentonly");
+	scope_getting.then(setscope, onError);
 
 	resetmax_getting = chrome.storage.local.get("resetmax");
 	resetmax_getting.then(setresetmax, onError);
@@ -171,7 +173,8 @@ function restoreOptions() {
 
 document.addEventListener("DOMContentLoaded", onstart);
 
-document.getElementById("currentonly").addEventListener("change", saveCurrentOnly);
+document.getElementById("perwindow").addEventListener("change", saveScope);
+document.getElementById("global").addEventListener("change", saveScope);
 document.getElementById("resetmax").addEventListener("change", saveResetMax);
 document.getElementById("notoggle").addEventListener("change", saveToggle);
 document.getElementById("showtabs").addEventListener("change", saveShowTabs);
