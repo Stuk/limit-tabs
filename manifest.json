@@ -2,7 +2,7 @@
   "description": "Limits tabs to keep things tidy",
   "manifest_version": 3,
   "name": "Limit Tabs",
-  "version": "2.2.10",
+  "version": "3.0.0",
   "background": {
     "service_worker": "limittabsto2.js"
   },
