@@ -301,9 +301,9 @@ async function doStuff() {
 
 			// For some reason, when manually removing a tab, the function gets called
 			//		before the tab is removed, hence need to subtract 1
-			if (! addonRemoving) {
-				totalTabs = totalTabs-1
-			}
+			// if (! addonRemoving) {
+			// 	totalTabs = totalTabs-1
+			// }
 			addonRemoving = false;
 		} 
 		updateBadgeCount(totalTabs, TABLIMIT);
