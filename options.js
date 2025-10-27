@@ -3,7 +3,7 @@
 //				Earlier was only current window
 // 2.2.10. Changed DEFAULTTABLIMIT from 2 to 1
 
-var DEFAULTTABLIMIT = 1;
+var DEFAULTTABLIMIT = 20;
 var currentonly = true;
 var resetmax = false;
 
