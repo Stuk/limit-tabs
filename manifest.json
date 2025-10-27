@@ -19,6 +19,7 @@
     "default_title": "Toggle Limit Tabs"
   },
   "icons": {
-    "32": "icons/enabled.png"
+    "32": "icons/enabled.png",
+    "128": "icons/enabled.png"
   }
 }
